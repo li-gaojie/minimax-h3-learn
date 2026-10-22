@@ -1,0 +1,348 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>从零读懂 ComfyUI · 12 课入门专题</title><meta name="description" content="为完全零基础准备的 ComfyUI 中文学堂，配有交互图解、连线练习、知识自测和真实工作流对照。"><link rel="stylesheet" href="course.css"></head><body>
+<header class="topbar"><a class="brand" href="learn.html"><span class="brandmark">C</span><span>ComfyUI <b>零基础学堂</b></span></a><div class="topnav"><a href="index.html">你的工作流图解 ↗</a><button id="glossaryBtn">术语速查</button></div></header>
+<div class="course-shell"><aside class="course-aside"><button class="overview-link" id="overviewBtn">课程总览 <span>↗</span></button><div class="progressbox"><div><span>我的学习进度</span><b id="progressText">0 / 12</b></div><div class="progress-track"><i id="progressBar"></i></div><small id="storageNote">进度只保存在当前浏览器</small></div><div class="stage-label">从认识界面，到读懂这张图</div><nav id="lessonNav" aria-label="课程目录"></nav><div class="aside-foot">12 课 · 按自己的节奏学习<br>随时复习，不设解锁门槛</div></aside>
+<main id="courseMain" tabindex="-1"></main></div><div id="courseToast" role="status"></div>
+<script id="lessons" type="application/json">[
+  {
+    "id": 1,
+    "title": "ComfyUI 到底是什么？",
+    "short": "认识整个工作台",
+    "goal": "能用一句话解释“工作流”。",
+    "body": "<p>你可以把 ComfyUI 看作一张能工作的流程图。每个方块做一件事，线把前一步的东西交给后一步。把它们接起来，就能完成生成图片、视频或处理声音的任务。<\/p><p>想象一间小厨房：菜谱决定步骤，工具各有用途，食材在不同工序之间传递。这里的“菜谱”就是<b>工作流<\/b>，每道工序是<b>节点<\/b>，模型、文字、图片等是各步使用的数据。<\/p><h3>你现在接触的三个东西<\/h3><div class=\"compare\"><div><b>ComfyUI<\/b><p>画布和执行系统。负责把这些节点组织起来。<\/p><\/div><div><b>RunningHub<\/b><p>你打开工作流的云端平台。界面、资源和运行入口由平台提供。<\/p><\/div><div><b>MiniMax H3 工作流<\/b><p>一份具体的音视频生成方案，使用了多个模型和插件节点。<\/p><\/div><\/div><p>这一专题先教你读图。无需先安装软件或购买模型；后面再用已经查看过的真实工作流做对照。<\/p>",
+    "visual": "workflow",
+    "q": "一份工作流最接近什么？",
+    "options": [
+      "一个 AI 模型文件",
+      "一套由节点和连线组织的处理步骤",
+      "一张已经生成的成片"
+    ],
+    "answer": 1,
+    "why": "模型是流程会用到的工具；工作流说明工具如何配合、数据如何传递。",
+    "nodes": [
+      145
+    ],
+    "sources": [
+      {
+        "label": "workflow",
+        "url": "https://docs.comfy.org/basic-concepts/workflow"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "看懂一个节点",
+    "short": "方块里的四个区域",
+    "goal": "能分清名字、输入、输出和参数。",
+    "body": "<p>先别读整张图，只看一个方块。通常上方是节点名，左侧是输入口，右侧是输出口，中间是可以填写或选择的参数。不同插件的排版会有变化。<\/p><div class=\"keylist\"><p><b>名字：<\/b>告诉你这一步大概做什么，如 Load Image 是加载图片。<\/p><p><b>输入：<\/b>这一步需要什么，如一张图片、一个模型或一个数字。<\/p><p><b>输出：<\/b>做完后交出什么，如处理后的图片或潜变量。<\/p><p><b>参数：<\/b>决定这一步怎么做，如放大倍数、输出宽高。<\/p><\/div><p>节点的显示名称可以改。读复杂图时，结合<b>类型名、端口类型和节点 ID<\/b>定位，比只记方块颜色可靠。#145 只是这张图中的编号，不代表所有工作流里导演台都叫 145。<\/p><h3>参数和端口是什么关系？<\/h3><p>数字可以直接填写，也可能由上游节点提供。一旦转换为输入并接线，值会从线上来。看到“未接线，使用控件参数”时，仍然可能是完整有效的配置。<\/p>",
+    "visual": "anatomy",
+    "q": "width=864 这样的数值属于什么？",
+    "options": [
+      "节点的输出成片",
+      "节点参数",
+      "一定缺失的连接线"
+    ],
+    "answer": 1,
+    "why": "width 是控制生成宽度的参数；是否需要接线，要看该输入是控件值还是必须从上游获得的数据。",
+    "nodes": [
+      38,
+      145
+    ],
+    "sources": [
+      {
+        "label": "nodes",
+        "url": "https://docs.comfy.org/basic-concepts/nodes"
+      },
+      {
+        "label": "properties",
+        "url": "https://docs.comfy.org/basic-concepts/properties"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "连线传递的是什么？",
+    "short": "先认类型，再找方向",
+    "goal": "能判断一个输出能否接到一个输入。",
+    "body": "<p>连线从上游的<b>输出口<\/b>走向下游的<b>输入口<\/b>。节点放在画布左边还是右边，只是排版；真正的数据方向由端口决定。<\/p><p>把端口理解为带规格的插口：图片口接图片，数字口接数字。界面可能用颜色提示类型，但主题和插件可能改变颜色，优先读类型文字。<\/p><div class=\"typegrid\"><div><b>IMAGE<\/b><span>像素图片或一批帧<\/span><\/div><div><b>MODEL<\/b><span>生成模型对象<\/span><\/div><div><b>LATENT<\/b><span>生成过程的潜变量<\/span><\/div><div><b>CONDITIONING<\/b><span>编码后的条件信息<\/span><\/div><div><b>AUDIO<\/b><span>声音数据<\/span><\/div><div><b>INT / FLOAT<\/b><span>整数 / 小数<\/span><\/div><\/div><p>同一种数据可以分发给多个节点。线交叉处没有连接点时，并不会自动交换数据。转接点 Reroute 用来整理和分线，本身不改变图片。<\/p><p><code>*<\/code> 是某些插件使用的通配接口；能否处理特定数据，还要看插件设计，不能把它当作任意数据都可随便混用。<\/p>",
+    "visual": "wire",
+    "q": "Save Image 的 images 输入口需要 IMAGE，应该接哪一路？",
+    "options": [
+      "MODEL 主模型",
+      "IMAGE 图片",
+      "INT 整数"
+    ],
+    "answer": 1,
+    "why": "保存图片节点需要可以保存的像素图片；模型对象和数字不能直接当作图片。",
+    "nodes": [
+      23,
+      22,
+      30
+    ],
+    "sources": [
+      {
+        "label": "links",
+        "url": "https://docs.comfy.org/basic-concepts/links"
+      },
+      {
+        "label": "properties",
+        "url": "https://docs.comfy.org/basic-concepts/properties"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "一张图片是怎样生成的？",
+    "short": "读懂最小文生图流程",
+    "goal": "知道采样器前后发生了什么。",
+    "body": "<p>以经典的 Stable Diffusion 文生图为例：先准备模型，写下画面要求，设定潜变量的大小，采样器逐步更新潜变量，再解码成可见图片并保存。<\/p><p><b>潜变量（Latent）<\/b>可以先理解为模型内部使用的紧凑表示。它还不是普通图片，不能直接当作 PNG 查看。空潜变量节点通常定义大小与批量；采样时的随机噪声由采样过程配合种子准备。<\/p><p><b>采样器（KSampler）<\/b>使用模型与条件，执行一系列更新。输出仍是 LATENT。<b>VAE Decode<\/b> 再把它转成 IMAGE，最后交给保存图片节点。<\/p><div class=\"callout\">这是学习用的经典流程。不同模型可能使用其他节点、不同文本编码方式或打包成一个大节点，不要求每张图长得一样。<\/div><p>在你的 H3 工作流中，#145 导演台把很多内部步骤包在一起，所以画布上没有单独摆出每一个 KSampler 和解码节点。<\/p>",
+    "visual": "pipeline",
+    "q": "KSampler 输出后，通常还需要什么才能得到普通图片？",
+    "options": [
+      "VAE 解码成 IMAGE",
+      "再写一次相同的提示词",
+      "只改文件名后缀"
+    ],
+    "answer": 0,
+    "why": "采样器通常输出潜变量；VAE 解码才把它转成普通像素图片。",
+    "nodes": [
+      145,
+      3
+    ],
+    "sources": [
+      {
+        "label": "t2i",
+        "url": "https://docs.comfy.org/tutorials/basic/text-to-image"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "模型、编码器和 VAE",
+    "short": "分清三种工具",
+    "goal": "知道模型文件为什么要配套。",
+    "body": "<p>你会遇到三个经常被混称为“模型”的东西。先按职责分开理解，比背文件名容易。<\/p><div class=\"compare\"><div><b>生成主模型<\/b><p>负责生成过程中的预测和更新所需计算，决定能处理什么任务与表示。<\/p><\/div><div><b>文本 / 多模态编码器<\/b><p>把文字和相应输入转换成生成模型可使用的条件表示。<\/p><\/div><div><b>VAE<\/b><p>在像素、声音与潜空间表示之间做编码/解码，具体能力取决于模型。<\/p><\/div><\/div><p>某些 Checkpoint 文件包含多种组件，另一些流程分别加载。文件都叫 <code>.safetensors<\/code>，并不代表它们可以互相替换：后缀是存储格式，模型家族和用途才决定兼容性。<\/p><p>你的图中：#38 加载 FL2VA 主模型，#39 加载 Qwen3-VL 编码器，#3 和 #4 分别提供视频、音频 VAE。界面的 CLIP 类型是接口名，不足以推断背后一定是传统 CLIP 编码器。<\/p><div class=\"callout\">初学时使用一份已知可用模板的配套模型。遇到尺寸或通道不匹配，先核对家族与配套组件。<\/div>",
+    "visual": "roles",
+    "q": "两个文件都以 .safetensors 结尾，能直接互换吗？",
+    "options": [
+      "可以，后缀相同就兼容",
+      "还要核对模型家族、职责和所需组件",
+      "只看文件大小就能决定"
+    ],
+    "answer": 1,
+    "why": "后缀说明保存格式；不同架构的主模型、VAE、编码器和 LoRA 可能完全不兼容。",
+    "nodes": [
+      38,
+      39,
+      3,
+      4
+    ],
+    "sources": [
+      {
+        "label": "error",
+        "url": "https://docs.comfy.org/troubleshooting/model-issues"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "提示词如何变成条件？",
+    "short": "让要求更清楚",
+    "goal": "能写一段便于验证的画面描述。",
+    "body": "<p>提示词是你提出的要求。文本编码器把这些文字变成条件表示，再交给生成模型。经典文生图常见 positive 和 negative 两路；其他模型不一定使用同一套结构。<\/p><p>第一次练习，先写清楚<b>主体、动作、场景、镜头<\/b>。例如：“一只橘猫坐在窗台上，轻轻转头，窗外下雨，固定中景镜头。”比堆叠许多互相冲突的风格词更容易观察变化。<\/p><div class=\"compare\"><div><b>要求含糊<\/b><p>“很美、大片、超清、完美。”<br>难以检查具体哪里符合要求。<\/p><\/div><div><b>要求可观察<\/b><p>“蓝色茶杯放在木桌左侧，柔和侧光，固定近景。”<br>主体、位置与镜头都可核对。<\/p><\/div><\/div><p>视频提示词还需要动作与时间顺序。内容应放进实际设置的时长内；提示词写 15 秒，不会自动把 5 秒的时间轴扩成 15 秒。<\/p><p>提示词权重语法、语言偏好、负向提示支持方式都随模型和节点变化。先用模板提供的写法，不把一种模型的技巧套到所有模型。<\/p>",
+    "visual": "prompt",
+    "q": "时间轴只有 5 秒，提示词却描述到 15 秒，先检查什么？",
+    "options": [
+      "提示词和实际时长是否一致",
+      "把所有形容词重复三遍",
+      "把随机种子改得更大"
+    ],
+    "answer": 0,
+    "why": "画面计划要能在设定的帧数与时长内表达；先缩短内容或在练习副本里匹配时长。",
+    "nodes": [
+      145
+    ],
+    "sources": [
+      {
+        "label": "t2i",
+        "url": "https://docs.comfy.org/tutorials/basic/text-to-image"
+      },
+      {
+        "label": "h3",
+        "url": "https://github.com/AIMixer/ComfyUI_MiniMaxH3_Director"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "seed、steps、CFG 怎么看？",
+    "short": "学会一次只改一项",
+    "goal": "知道三个参数各自在控制什么。",
+    "body": "<p><b>Seed（种子）<\/b>用于确定随机噪声。比较两次结果时，固定种子有助于减少随机差异；还要固定模型、参数和运行环境等条件。它不是画质评分，换机器或实现后也不能仅凭种子保证逐像素一致。<\/p><p><b>Steps（步数）<\/b>是采样更新的次数。更多步往往增加计算量，但不保证效果一直变好。蒸馏或加速模型可能专门为少步数训练；你的 H3 快照使用 4 步，不能照搬别的模型的步数建议。<\/p><p><b>CFG（条件引导强度）<\/b>影响采样如何受条件约束。可用范围和行为随模型而异，不是越高越好。你的导演台保存值为 1，应结合相应底模与 LoRA 配置理解。<\/p><h3>一个容易比较的实验<\/h3><p>先保留模板默认值并固定种子。只改提示词里一个动作，观察差异并记录；恢复后再试另一个参数。一次改四五项，就很难知道哪项造成了变化。<\/p>",
+    "visual": "seed",
+    "q": "怎样比较一个参数的影响更可靠？",
+    "options": [
+      "同时换模型、提示词和种子",
+      "固定其他条件，只改变这一项并记录",
+      "把所有数值都调到最大"
+    ],
+    "answer": 1,
+    "why": "控制其他条件，才能把变化较清楚地归因到正在观察的参数。",
+    "nodes": [
+      145,
+      104
+    ],
+    "sources": [
+      {
+        "label": "sample",
+        "url": "https://docs.comfy.org/built-in-nodes/KSampler"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "图生图、LoRA 与旁路",
+    "short": "认识常见扩展",
+    "goal": "知道“改图”和“给模型加补丁”的区别。",
+    "body": "<p><b>图生图<\/b>把已有图片作为生成的起点或条件。经典图生图流程常先 VAE 编码，再由采样器处理。denoise 影响改动程度：在相应流程里，较低值通常更保留原结构，较高值允许更大变化；这不是所有图片参考节点通用的“相似度滑块”。<\/p><p><b>LoRA<\/b>是一种对兼容模型应用的权重补丁，可用于风格、人物概念或加速等。它通常不是直接对成片加滤镜。强度控制补丁作用程度，是否加载、家族是否匹配都要先确认。<\/p><p>你的 #104 是 4 步加速 LoRA，#90 是 Prompt Rewriter LoRA；不要从名称推断它们是美化图片的滤镜。<\/p><p><b>正常<\/b>表示节点可按需要执行；<b>旁路<\/b>跳过该节点自己的处理，尝试传递兼容数据；<b>停用<\/b>则可能让下游拿不到必需数据。多个输入或无输入的节点，不能简单套用单路旁路示意。<\/p>",
+    "visual": "bypass",
+    "q": "LoRA 节点被旁路，是否还能看到一根连接线？",
+    "options": [
+      "不能，有线就表示补丁已生效",
+      "能，有线与节点是否执行是两件事",
+      "有线就一定会导致报错"
+    ],
+    "answer": 1,
+    "why": "旁路节点的线可以保留，它自己的补丁处理不执行。实际传递需看类型和插件实现。",
+    "nodes": [
+      104,
+      90,
+      111
+    ],
+    "sources": [
+      {
+        "label": "lora",
+        "url": "https://docs.comfy.org/tutorials/basic/lora"
+      },
+      {
+        "label": "i2i",
+        "url": "https://docs.comfy.org/tutorials/basic/image-to-image"
+      },
+      {
+        "label": "nodes",
+        "url": "https://docs.comfy.org/basic-concepts/nodes"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "视频是帧加时间",
+    "short": "分清分辨率、帧数与帧率",
+    "goal": "能算出一批帧大约播放多久。",
+    "body": "<p>视频可以先想成按顺序播放的一叠图片。<b>宽 × 高<\/b>描述每张画面的尺寸，<b>帧数<\/b>是有多少张，<b>fps<\/b>是每秒播放多少张。<\/p><div class=\"formula\">时长（秒）≈ 总帧数 ÷ fps<\/div><p>你的快照是 124 帧、24 fps，所以约 5.17 秒。界面填写 5 秒后得到 124 帧，是该模型/插件的帧数适配结果，不是所有视频都必须使用这个数。<\/p><p><b>放大<\/b>改变每帧宽高，例如 864×480 的宽高各乘 2 后约为 1728×960。<b>补帧<\/b>增加中间画面，旨在提高运动流畅度；具体边界帧计数随算法实现。<\/p><p>只把 24 fps 改成 48 fps，而保持 124 帧不变，播放时长会减半。若补帧后帧数相应增加，同时提高 fps，才旨在维持原时长。补帧不能保证恢复真实拍到的细节。<\/p><p>声音是独立的数据流。视频封装器把画面、fps 和音频组合成 MP4；有图像输出不等于已经生成了带声音的文件。<\/p>",
+    "visual": "video",
+    "q": "124 帧从 24 fps 改成 48 fps，帧数不变，时长怎样变化？",
+    "options": [
+      "从约 5.17 秒变成约 2.58 秒",
+      "保持约 5.17 秒",
+      "变成约 10.33 秒"
+    ],
+    "answer": 0,
+    "why": "124÷48≈2.58；只提高播放速度不会凭空多出画面。",
+    "nodes": [
+      145,
+      26,
+      30,
+      19
+    ],
+    "sources": [
+      {
+        "label": "h3",
+        "url": "https://github.com/AIMixer/ComfyUI_MiniMaxH3_Director"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "回到你的 H3 工作流",
+    "short": "把 51 个节点分成五块",
+    "goal": "能沿着基础输出反向追踪。",
+    "body": "<p>现在不必逐个背下 51 个节点。先把图分成五块：<b>模型准备 → 模型补丁 → 导演台 → 音轨选择 → 视频输出<\/b>。放大与补帧是另外的后期路线。<\/p><ol><li>先找结果：#30 是当前正常模式的基础视频封装器。<\/li><li>沿 images 输入回去：#30 ← #23 ← #145。<\/li><li>看导演台需要什么：model 来自 #90，两个 VAE 来自 #3/#4，clip 来自 #39。<\/li><li>再看声音：audio 接 #84，其上游包含旁路节点，连线图本身不足以验证实际声音。<\/li><li>最后看附加功能：普通后期与高级后期都保存为旁路。<\/li><\/ol><p>当前是 i2v 图生视频，参考图存在导演台的内部素材槽。#78 虽然叫 LoadImage，但它的输出没有接线，因此不是当前首帧来源。<\/p><p>“正常模式”也不表示节点刚刚执行过。原页面检查时为 Idle；历史预览不能证明当前配置已运行成功。<\/p>",
+    "visual": "h3",
+    "q": "想找当前图生视频的首图，应该先去哪里看？",
+    "options": [
+      "未接线的 #78",
+      "导演台 #145 内部素材槽",
+      "#26 帧率计算器"
+    ],
+    "answer": 1,
+    "why": "这份快照的图片保存于导演台内部；#78 没有把图像送进生成链。",
+    "nodes": [
+      30,
+      145,
+      78,
+      23
+    ],
+    "sources": [
+      {
+        "label": "h3",
+        "url": "https://github.com/AIMixer/ComfyUI_MiniMaxH3_Director"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "遇到报错，先找哪一层？",
+    "short": "按现象排查",
+    "goal": "分清缺节点、缺模型、类型不合与显存问题。",
+    "body": "<p>先保留报错原文和正在使用的工作流副本，再按现象判断。<b>颜色只是提示，具体错误文字和节点名更重要。<\/b><\/p><div class=\"keylist\"><p><b>未知 / 缺失节点：<\/b>先检查对应插件是否安装成功、版本是否支持。节点代码和模型权重是两种东西，下载模型不能补上缺失的节点代码。<\/p><p><b>模型下拉列表空 / 文件不存在：<\/b>核对模型是否在平台可用资源中、加载器是否选对类别。云端平台和本地路径的处理方式不同。<\/p><p><b>尺寸、通道或矩阵不匹配：<\/b>优先核对主模型、VAE、编码器、LoRA 家族，以及图像或潜变量类型。<\/p><p><b>Out of memory / OOM：<\/b>通常是运行资源不足。可在练习副本中先降低宽高、帧数或批量，再按模板建议选择资源。<\/p><\/div><p>只看“没有出图”还无法确定是哪种错误。先看输出端是否连接，再看报错；不要同时更新所有插件和替换多个模型，这样更难定位原因。<\/p>",
+    "visual": "troubleshoot",
+    "q": "出现 unknown node type，最先核对什么？",
+    "options": [
+      "对应节点插件是否存在且加载成功",
+      "把 CFG 调高",
+      "更换输出文件名前缀"
+    ],
+    "answer": 0,
+    "why": "unknown node type 指向节点定义缺失；它与提示词强度或输出文件名不是同一层问题。",
+    "nodes": [
+      145,
+      38
+    ],
+    "sources": [
+      {
+        "label": "error",
+        "url": "https://docs.comfy.org/troubleshooting/model-issues"
+      },
+      {
+        "label": "nodes",
+        "url": "https://docs.comfy.org/basic-concepts/nodes"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "完成你的第一次读图练习",
+    "short": "把知识串起来",
+    "goal": "用五个问题独立解释这份快照。",
+    "body": "<p>这一课不要求生成视频。只要能在图里找到证据、用自己的话解释，你就已经迈过了最初的读图门槛。<\/p><p>按下面清单逐项打开对应节点检查。你可以回到前面的课程，完成后再勾选；完成情况保存在当前浏览器。<\/p><div id=\"capstone\"><\/div><h3>之后想真正运行，怎样开始？<\/h3><p>另存一份练习副本，保留已知可用模板的模型与采样配置。先使用简单主体、短时长和较低分辨率，核对平台给出的资源与费用提示，再决定是否运行。每次只改一项，并记录前后结果。<\/p><p>本专题没有连接运行接口，点击练习不会提交任务。界面版本、平台限制和模型说明可能更新，正式操作时以当前平台及对应模型文档为准。<\/p><div class=\"callout\">能说清“这一步吃进什么、做什么、交出什么”，比记住一个很长的节点名更有用。<\/div>",
+    "visual": "finish",
+    "q": "如果要比较“转头”和“不转头”的效果，你会怎样做？",
+    "options": [
+      "在同一个练习副本里固定其他条件，只改动作描述",
+      "同时更换底模、分辨率、步数和种子",
+      "直接修改原始工作流后覆盖保存"
+    ],
+    "answer": 0,
+    "why": "用副本保留基准，控制变量，再比较可观察的动作变化。",
+    "nodes": [
+      145,
+      30
+    ],
+    "sources": [
+      {
+        "label": "workflow",
+        "url": "https://docs.comfy.org/basic-concepts/workflow"
+      }
+    ]
+  }
+]</script><script src="course.js"></script></body></html>
